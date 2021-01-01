@@ -6,7 +6,7 @@ class IconFinder {
         this._app = app;
         this._CLIENT_ID = process.env.ICON_FINDER_CLIENT_ID.trim()
         this._CLIENT_SECRET = process.env.ICON_FINDER_CLIENT_SECRET.trim()
-        this._baseUrl = 'https://api.iconfinder.com/v3/'
+        this._baseUrl = 'https://api.iconfinder.com/v4/'
     }
 
     async search(query) {
@@ -27,7 +27,7 @@ class IconFinder {
     }
 
     async download(url) {
-        return this._get(`${this._baseUrl}${url}?`);
+        return this._get(`${url}?`);
     }
 
     _getUrlForDownload(url) {
@@ -37,7 +37,13 @@ class IconFinder {
     _get(url) {
         return new Promise((resolve, reject) => {
             url = `${url}&client_id=${this._CLIENT_ID}&client_secret=${this._CLIENT_SECRET}`
-            Request.get(url, (err, res, body) => {
+            Request.get({
+                url,
+                headers: {
+                    Authorization: `Bearer ${this._CLIENT_ID}` 
+                },
+            }, (err, res, body) => {
+                console.log(err, res, body);
                 if (err) return reject(err);
                 resolve(body);
             })
